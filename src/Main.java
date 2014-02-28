@@ -1,4 +1,5 @@
 import java.util.LinkedList;
+import java.util.Scanner;
 import java.io.*;
 import java.text.DecimalFormat;
 
@@ -13,7 +14,8 @@ public class Main {
 //		computeCCs(20);
 //		computeCCs(100);
 //		computeCCs(500);
-		computeCCs(1000);
+//		computeCCs(1000);
+		recursePTimes(new File("C:\\Users\\danny_000\\Desktop\\impProj"));
 			
 	}
 	
@@ -73,6 +75,77 @@ public class Main {
 		
 		
 		return;
+	}
+	
+	public static void recursePTimes(File node)
+	{
+		if (!node.isDirectory())
+		{
+			System.err.println("File " + node.getAbsoluteFile() +
+					" is not a directory.");
+			return;
+		}
+		
+		System.out.println("Recursing in directory " + node.getAbsoluteFile());
+		String[] fileNames = node.list();
+		
+		for (int i = 0; i < fileNames.length; i++)
+		{
+			String currFile = fileNames[i];
+			if (currFile.contains("ccRunTimes"))
+			{
+				printTimes(new File(node.getAbsoluteFile()+
+						"\\" + currFile));
+			}
+		}
+	}
+	
+	public static void printTimes(File node){
+		
+		System.out.println("Current file: " + node.getAbsoluteFile());
+ 
+		double totalTime = 0;
+		
+		try
+		{
+			Scanner fileReader = new Scanner(node.getAbsoluteFile());
+			while (fileReader.hasNextLine())
+			{
+				String line = fileReader.nextLine();
+				String[] nums;
+				
+				if (line.contains("#") || line.isEmpty())
+					continue; //skip
+				else
+				{
+					nums = line.split(" ");
+				}
+				totalTime += Double.parseDouble(nums[1]);
+			}
+		} catch (Exception e)
+		{
+			System.err.println(e.getMessage());
+		}
+		
+		String units = "ms";
+		if (totalTime > 1000)
+		{
+			totalTime = totalTime / 1000;
+			units = "s";
+			if (totalTime > 60)
+			{
+				totalTime = totalTime / 60;
+				units = "mins";
+				if (totalTime > 60)
+				{
+					totalTime = totalTime / 60;
+					units = "hrs";
+				}
+			}
+		}
+		
+		System.out.println("Total time taken: " + totalTime + units);
+ 
 	}
 	
 
