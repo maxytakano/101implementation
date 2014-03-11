@@ -35,16 +35,16 @@ public class Main {
 			}
 		});
 		
-		thread1.start();
-		thread2.start();
-		thread3.start();
-		thread4.start();
+//		thread1.start();
+//		thread2.start();
+//		thread3.start();
+//		thread4.start();
 
 //		computeCCs(20);
 //		computeCCs(100);
 //		computeCCs(500);
 //		computeCCs(1000);
-//		recursePTimes(new File("C:\\Users\\danny_000\\Desktop\\impProj"));
+		recursePTimes(new File("."));
 			
 	}
 	
@@ -162,24 +162,26 @@ public class Main {
 			System.err.println(e.getMessage());
 		}
 		
-		String units = "ms";
+		String units = " ms";
 		if (totalTime > 1000)
 		{
 			totalTime = totalTime / 1000;
-			units = "s";
+			units = " s";
 			if (totalTime > 60)
 			{
 				totalTime = totalTime / 60;
-				units = "mins";
+				units = " mins";
 				if (totalTime > 60)
 				{
 					totalTime = totalTime / 60;
-					units = "hrs";
+					units = " hrs";
 				}
 			}
 		}
 		
-		System.out.println("Total time taken: " + totalTime + units);
+		DecimalFormat fmt = new DecimalFormat("#.##");
+		
+		System.out.println("Total time taken: " + fmt.format(totalTime) + units);
  
 	}
 	

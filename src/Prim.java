@@ -2,12 +2,12 @@ import java.util.*;
 
 public class Prim
 {
-	public static double[] primsMST(Graph g)
+	public static int[] primsMST(double[][] g)
 	{
-		double[][] graph = g.getAdjacency();
+		double[][] graph = g;
 		int length = graph.length;
 		
-		double[] prev = new double[length];	
+		int[] prev = new int[length];	
 		Vertex[] cost = new Vertex[length];
 		
 		Comparer<Vertex> c = new Comparer<Vertex>();
@@ -31,16 +31,22 @@ public class Prim
 			prev[i] = -1;
 		}
 		
+		boolean[] inPQ = new boolean[length];
+		for (int i = 0; i < inPQ.length; i ++)
+		{
+			inPQ[i] = true;
+		}
 		
 		while(pq.size()!=0)
 		{
 			//removes the vertex with the smallest cost in the pq
 			Vertex v = pq.poll();
 			int i = v.vert;
+			inPQ[i] = false;
 			
 			for(int j = 0; j < i; j++)
 			{
-				if(cost[j].getCost() > graph[i][j])
+				if(cost[j].getCost() > graph[i][j] && inPQ[j])
 				{
 					Vertex vertexJ = cost[j];
 					pq.remove(vertexJ);
@@ -52,9 +58,41 @@ public class Prim
 					prev[j] = i;
 				}
 			}
+			
+			for(int j = i+1; j < length; j++)
+			{
+				if(cost[j].getCost() > graph[j][i] && inPQ[j])
+				{
+					Vertex vertexJ = cost[j];
+					pq.remove(vertexJ);
+						
+					vertexJ.setCost(graph[j][i]);
+					pq.add(vertexJ);
+						
+					cost[j] = vertexJ;
+					prev[j] = i;
+				}
+			}
 		}
 		
 		return prev;
+	}
+	
+	public static double calcMSTCost(double[][] graph, int[] prevs)
+	{
+		double totalCost = 0;
+		for (int i = 0; i < prevs.length; i++)
+		{
+			int prev = prevs[i];
+			if (prev == -1)
+				continue;
+			
+			if (i < prev)
+				totalCost += graph[prev][i];
+			else
+				totalCost += graph[i][prev];
+		}
+		return totalCost;
 	}
 	
 	public static class Vertex
@@ -106,6 +144,119 @@ public class Prim
 		{
 			return true;
 		}
+	}
+	
+	public static void main(String[] args)
+	{
+		Graph graph = new Graph(4, 1);
+		LinkedList<Integer[]> ccs = CCFinder.findCCs(graph.getAdjacency());
+		System.out.println("graph for n = 4 and p = 1:");
+		for(int i = 0; i < graph.n; i++) {
+			System.out.print("v" + i +": ");
+			for(int j = 0; j < graph.n; j++) {
+				System.out.print(graph.getAdjacency()[j][i] + " | ");
+			}
+			System.out.println("");
+		}
+		System.out.println("CCs for this graph:");
+		for (int i = 0; i < ccs.size(); i++)
+		{
+			Integer[] cc = ccs.get(i);
+			System.out.print("CC " + i + " : ");
+			for (int j = 0; j < cc.length; j++)
+			{
+				System.out.print(cc[j] + ", ");
+			}
+			System.out.println();
+		}
+		
+		int[] mstEdges = primsMST(graph.getAdjacency());
+		double totalCost = calcMSTCost(graph.getAdjacency(), mstEdges);
+
+		System.out.println("Total Mst Cost:\n" + totalCost);
+		
+//		System.out.println("\n\n");
+//		
+//		Graph graph2 = new Graph(6, .1);
+//		LinkedList<Integer[]> ccs2 = CCFinder.findCCs(graph2.getAdjacency());
+//		System.out.println("graph for n = 6 and p = .1:");
+//		for(int i = 0; i < graph2.n; i++) {
+//			System.out.print("v" + i +": ");
+//			for(int j = 0; j < graph2.n; j++) {
+//				System.out.print(graph2.getAdjacency()[j][i] + " | ");
+//			}
+//			System.out.println("");
+//		}
+//		System.out.println("CCs for this graph:");
+//		for (int i = 0; i < ccs2.size(); i++)
+//		{
+//			Integer[] cc2 = ccs2.get(i);
+//			System.out.print("CC " + i + " : ");
+//			for (int j = 0; j < cc2.length; j++)
+//			{
+//				System.out.print(cc2[j] + ", ");
+//			}
+//			System.out.println();
+//		}
+//		
+//		System.out.println("\n\n");
+//		
+////		Graph graph3 = new Graph(6, .1);
+//		double[][] graph3= {{0, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0},
+//				{-1, -1, 0, 0, 0, 0}, {0.57, -1, -1, 0, 0, 0},
+//				{-1, 0.09, -1, -1, 0, 0}, {-1, -1, -1, -1, -1, 0}};
+//		LinkedList<Integer[]> ccs3 = CCFinder.findCCs(graph3);
+//		System.out.println("graph for n = 6 and 4 CCs");
+//		for(int i = 0; i < graph3[0].length; i++) {
+//			System.out.print("v" + i +": ");
+//			for(int j = 0; j < graph3[0].length; j++) {
+//				System.out.print(graph3[j][i] + " | ");
+//			}
+//			System.out.println("");
+//		}
+//		System.out.println("CCs for this graph:");
+//		for (int i = 0; i < ccs3.size(); i++)
+//		{
+//			Integer[] cc3 = ccs3.get(i);
+//			System.out.print("CC " + i + " : ");
+//			for (int j = 0; j < cc3.length; j++)
+//			{
+//				System.out.print(cc3[j] + ", ");
+//			}
+//			System.out.println();
+//		}
+		
+		System.out.println("\n\n");
+		
+//		Graph graph3 = new Graph(6, .1);
+		double[][] graph4= {{0, 0, 0, 0}, {.809, 0, 0, 0},
+				{.61, .497, 0, 0}, {.75, .704, .146, 0}};
+		LinkedList<Integer[]> ccs4 = CCFinder.findCCs(graph4);
+		System.out.println("graph for n = 4 and 1 CC");
+		for(int i = 0; i < graph4[0].length; i++) {
+			System.out.print("v" + i +": ");
+			for(int j = 0; j < graph4[0].length; j++) {
+				System.out.print(graph4[j][i] + " | ");
+			}
+			System.out.println("");
+		}
+		System.out.println("CCs for this graph:");
+		for (int i = 0; i < ccs4.size(); i++)
+		{
+			Integer[] cc4 = ccs4.get(i);
+			System.out.print("CC " + i + " : ");
+			for (int j = 0; j < cc4.length; j++)
+			{
+				System.out.print(cc4[j] + ", ");
+			}
+			System.out.println();
+		}
+		
+		int[] mstEdges4 = primsMST(graph4);
+		double totalCost4 = calcMSTCost(graph4, mstEdges4);
+		
+		System.out.println("Total Mst Cost Calculated:\n" + totalCost4);
+		System.out.println("Total Actual Mst Cost:\n" + 1.253);
 	}
 }
 
