@@ -11,11 +11,40 @@ public class Main {
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
+		Thread thread1 = new Thread(new Runnable() {
+			public void run() {
+				Main.computeCCs(20);
+			}
+		});
+		
+		Thread thread2 = new Thread(new Runnable() {
+			public void run() {
+				Main.computeCCs(100);
+			}
+		});
+		
+		Thread thread3 = new Thread(new Runnable() {
+			public void run() {
+				Main.computeCCs(500);
+			}
+		});
+		
+		Thread thread4 = new Thread(new Runnable() {
+			public void run() {
+				Main.computeCCs(1000);
+			}
+		});
+		
+		thread1.start();
+		thread2.start();
+		thread3.start();
+		thread4.start();
+
 //		computeCCs(20);
 //		computeCCs(100);
 //		computeCCs(500);
 //		computeCCs(1000);
-		recursePTimes(new File("C:\\Users\\danny_000\\Desktop\\impProj"));
+//		recursePTimes(new File("C:\\Users\\danny_000\\Desktop\\impProj"));
 			
 	}
 	
@@ -28,16 +57,19 @@ public class Main {
 		DecimalFormat fmt = new DecimalFormat("#.##");
 		
 		BufferedWriter runTimeOut;
-		BufferedWriter numCCOut;
+		BufferedWriter meanCCOut;
+		BufferedWriter stdCCOut;
 		
 		try
 		{
 			runTimeOut = new BufferedWriter(new FileWriter(new File(n + "ccRunTimes")));
-			numCCOut = new BufferedWriter(new FileWriter(new File(n + "ccStats")));
+			meanCCOut = new BufferedWriter(new FileWriter(new File(n + "ccStatsMean")));
+			stdCCOut = new BufferedWriter(new FileWriter(new File(n + "ccStatsStd")));
 			
 			
 			runTimeOut.write("#p runTime\n");
-			numCCOut.write("#p mean stdDev\n");
+			meanCCOut.write("#p mean\n");
+			stdCCOut.write("#p stdDev\n");
 			
 			for(int i = 0; i <= 50; i++) {
 				System.out.println("n = " + n + ", p = " + p);
@@ -60,12 +92,14 @@ public class Main {
 				double runTime = timer.runTime();
 				
 				runTimeOut.write(fmt.format(p) + " " + runTime + "\n");
-				numCCOut.write(fmt.format(p) + " " + mean + " " + stdDev + "\n");
+				meanCCOut.write(fmt.format(p) + " " + mean + "\n");
+				stdCCOut.write(fmt.format(p) + " " + stdDev + "\n");
 				p = p + .02;
 			}
 			
 			runTimeOut.close();
-			numCCOut.close();
+			meanCCOut.close();
+			stdCCOut.close();
 		} 
 		catch (Exception e)
 		{
@@ -122,6 +156,7 @@ public class Main {
 				}
 				totalTime += Double.parseDouble(nums[1]);
 			}
+			fileReader.close();
 		} catch (Exception e)
 		{
 			System.err.println(e.getMessage());

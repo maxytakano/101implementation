@@ -1,1 +1,5 @@
 *.class
+*ccStats
+*ccStatsMean
+*ccStatsStd
+*ccRunTimes
