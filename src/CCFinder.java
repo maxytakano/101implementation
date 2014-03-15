@@ -65,7 +65,14 @@ public class CCFinder {
 	{
 		if (ccList == null || graph == null)
 			return null;
+		
 		LinkedList<double[][]> graphCCs = new LinkedList<double[][]>();
+		
+		if (ccList.size() == 1)
+		{
+			graphCCs.add(graph);
+			return graphCCs;
+		}
 		
 //		for (Integer[] ary : ccList)
 //		{

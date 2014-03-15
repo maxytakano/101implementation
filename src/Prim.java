@@ -89,6 +89,15 @@ public class Prim
 	{
 		double[][] newGraph = new double[prev.length][prev.length];
 		
+		// Initialize all possible edges to -1 to indicate no edge
+		for (int i = 1; i < newGraph[0].length; i++)
+		{
+			for (int j = 0; j < i; j++)
+			{
+				newGraph[i][j] = -1;
+			}
+		}
+		
 		int i=1;
 		
 		for(; i<prev.length; i++)
@@ -327,6 +336,63 @@ public class Prim
 			}
 			System.out.println("");
 		}
+		
+		////////////////////////////////////////
+		System.out.println("\n\n");
+		
+//		Graph graph3 = new Graph(6, .1);
+		double[][] graph3= {{0, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0},
+				{0.3, -1, 0, 0, 0, 0}, {0.57, -1, -1, 0, 0, 0},
+				{-1, 0.09, -1, -1, 0, 0}, {-1, -1, -1, -1, -1, 0}};
+		LinkedList<Integer[]> ccs3 = CCFinder.findCCs(graph3);
+		System.out.println("graph for n = 6 and 4 CCs");
+		CCFinder.printGraph(graph3);
+//		for(int i = 0; i < graph3[0].length; i++) {
+//			System.out.print("v" + i +": ");
+//			for(int j = 0; j < graph3[0].length; j++) {
+//				System.out.print(graph3[j][i] + " | ");
+//			}
+//			System.out.println("");
+//		}
+		System.out.println("CCs for this graph:");
+		for (int i = 0; i < ccs3.size(); i++)
+		{
+			Integer[] cc3 = ccs3.get(i);
+			System.out.print("CC " + i + " : ");
+			for (int j = 0; j < cc3.length; j++)
+			{
+				System.out.print(cc3[j] + ", ");
+			}
+			System.out.println();
+		}
+		System.out.println("Individual CC graphs:");
+		LinkedList<double[][]> cc3Graphs = CCFinder.graphCCs(ccs3, graph3);
+		
+		Iterator<double[][]> it3 = cc3Graphs.iterator();
+		for (int m = 0; m < cc3Graphs.size(); m++)
+		{
+			double[][] currGraph3 = it3.next();
+			System.out.println("Graph for CC" + m + ":");
+			CCFinder.printGraph(currGraph3);
+			
+			int[] mstEdges3 = primsMST(currGraph3);
+			double totalCost3 = calcMSTCost(currGraph3, mstEdges3);
+			
+			System.out.println("Total Mst Cost Calculated:\n" + totalCost3);
+			
+			double[][] mstGraph3 = outputGraph(currGraph3, primsMST(currGraph3));
+			CCFinder.printGraph(mstGraph3);
+//			for(int i = 0; i < mstGraph3[0].length; i++) {
+//				System.out.print("v" + i +": ");
+//				for(int j = 0; j < mstGraph[0].length; j++) {
+//					System.out.print(mstGraph[j][i] + " | ");
+//				}
+//				System.out.println("");
+//			}
+		}
+		
+		
+		
 	}
 }
 
