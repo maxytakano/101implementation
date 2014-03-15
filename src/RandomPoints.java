@@ -12,6 +12,7 @@ import java.awt.geom.Point2D;
  */
 public class RandomPoints extends JFrame{
 	private int n;
+	private double r;
 	private List<Point2D.Double> points = new ArrayList<Point2D.Double>();
 	
 	Random randomD = new Random();
@@ -22,6 +23,12 @@ public class RandomPoints extends JFrame{
 	public RandomPoints(int number) {
 		n = number;
 		generateRandomPoints();
+	}
+	
+	public RandomPoints(int number, double r) {
+		this.r = r;
+		n = number;
+		generateAnnulusPoints();
 	}
 	
 	public void paint(Graphics g) {
@@ -40,16 +47,21 @@ public class RandomPoints extends JFrame{
 		
 	}
 	
+	/*
+	 * Used for testing, uses swing graphics to draw convex hull and stuff
+	 */
 	public static void main(String[] args) {
-		RandomPoints random = new RandomPoints(200);
+		//RandomPoints random = new RandomPoints(200);
+		RandomPoints random = new RandomPoints(200, .6);
 		random.setSize(800,800);
-		//random.generateRandomPoints();
 		
 		random.setVisible(true);
 		
 		while(random.points.isEmpty() == false) {
 			GrahamScan g = new GrahamScan();
 			random.hullPoints = g.getConvexHull(random.points);
+			
+			//random.hullPoints = g.getConvexHull(random.points);
 			
 			random.deleteHullPoints(random.points, random.hullPoints);
 			
@@ -64,6 +76,9 @@ public class RandomPoints extends JFrame{
 		}
 	}
 	
+	/*
+	 * Iteratively deletes each convex hull from the point set
+	 */
 	public int findShellNumber() {
 		int count = 0;
 		GrahamScan g = new GrahamScan();
@@ -77,12 +92,18 @@ public class RandomPoints extends JFrame{
 		return count; 
 	}
 	
+	/*
+	 * Deletes the current convex hull
+	 */
 	private void deleteHullPoints(List<Point2D.Double> points, List<Point2D.Double> hull) {
 		for (int i = 0; i < hull.size(); i++) {
 			points.remove(hull.get(i));
 		}
 	}
 	
+	/*
+	 * Generates random points from 0,1
+	 */
 	private void generateRandomPoints() {
 		for (int i = 0; i < n; i++) {
 			theta = 2*Math.PI*randomD.nextDouble();
@@ -92,5 +113,23 @@ public class RandomPoints extends JFrame{
 		}
 	}
 	
-	
+	/*
+	 * Generates random points in the annulus bound
+	 */
+	private void generateAnnulusPoints() {
+		for (int i = 0; i < n; i++) {
+			theta = 2*Math.PI*randomD.nextDouble();
+			
+			double Annulus = 2 / ( (1*1) - (r*r) );
+
+			radius = Math.sqrt( ((2 * randomD.nextDouble()) / Annulus) + (r*r) );
+
+			double x = radius * Math.cos(theta);
+			double y = radius * Math.sin(theta);
+			System.out.println(radius);
+			
+			points.add(new Point2D.Double(x, y));
+		}
+	}
+		
 }
