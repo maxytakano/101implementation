@@ -70,12 +70,18 @@ public class Main {
 		
 		thread3.start();
 		thread4.start();
+		try {
+			thread4.join();
+		} catch (Exception e)
+		{
+			System.err.println(e.getMessage());
+		}
 
 //		computeCCs(20);
 //		computeCCs(100);
 //		computeCCs(500);
 //		computeCCs(1000);
-//		recursePTimes(new File("."));
+		recursePTimes(new File("."));
 			
 	}
 	
@@ -177,18 +183,18 @@ public class Main {
 						
 			for(int i = 0; i <= 50;) {
 				
-				for (int j = i; j < i+4 && j <= 50; j++)
+				for (int j = i; j < i+8 && j <= 50; j++)
 				{
 					threads[j] = new Thread(mainInst.new MyRun(n, j, vals));
 					threads[j].start();
 				}
 				
-				for (int j = i; j < i+4 && j <= 50; j++)
+				for (int j = i; j < i+8 && j <= 50; j++)
 				{
 					threads[j].join();
 				}
 				
-				i = i + 4;
+				i = i + 8;
 			}
 			
 

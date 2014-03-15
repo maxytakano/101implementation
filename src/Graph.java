@@ -53,6 +53,8 @@ public class Graph {
 				nextP = randomP.nextDouble();
 				if(nextP < p) {
 					weight = randomP.nextDouble();
+					if (weight == 0)
+						System.out.println("Randomed 0 weight edge!");
 					adjacencyMatrix[i][j] = weight;
 				}
 				else {

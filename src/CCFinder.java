@@ -95,9 +95,18 @@ public class CCFinder {
 			{
 				for (int j = i+1; j< ary.length; j++)
 				{
-					currGraph[j][i] = graph[ary[j]][ary[i]];
+					int x = ary[j];
+					int y = ary[i];
+					if (x > y)
+						currGraph[j][i] = graph[x][y];
+					else
+						currGraph[j][i] = graph[y][x];
 				}
 			}
+			int x;
+			if (ccList.size() < 50)
+				x = 1;
+			
 			graphCCs.addLast(currGraph);
 		}
 
