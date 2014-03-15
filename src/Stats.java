@@ -59,6 +59,17 @@ public class Stats {
 		return mean;
 	}
 	
+	static double calcMean(double times[])
+	{
+		double total = 0;
+		for (int i = 0; i < times.length; i++)
+		{
+			total += times[i];
+		}
+		double mean = (total) / ((double)times.length);
+		return mean;
+	}
+	
 	static double stdDev(long times[])
 	{
 		double mean = calcMean(times);

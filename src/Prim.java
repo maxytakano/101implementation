@@ -103,7 +103,7 @@ public class Prim
 		for(; i<prev.length; i++)
 		{
 			int j = prev[i];
-			System.out.println(j);
+//			System.out.println(j);
 			if(i>j)
 			{
 				newGraph[i][j] = graph[i][j];
@@ -118,10 +118,10 @@ public class Prim
 	public static double calcMSTCost(double[][] graph, int[] prevs)
 	{
 		double totalCost = 0;
-		System.out.println("Prevs array: ");
+//		System.out.println("Prevs array: ");
 		for (int i = 0; i < prevs.length; i++)
 		{
-			System.out.print(prevs[i] + ", ");
+//			System.out.print(prevs[i] + ", ");
 			int prev = prevs[i];
 			if (prev == -1)
 				continue;
@@ -131,9 +131,95 @@ public class Prim
 			else
 				totalCost += graph[i][prev];
 		}
-		System.out.println(" ");
+//		System.out.println(" ");
 		return totalCost;
 		
+	}
+	
+	public static double[] bfs(double[][] mst, int startIndex)
+	{
+		double[] dist = new double[mst.length];
+		
+		if(startIndex < mst.length);
+		{
+		
+			for(int i=0; i<dist.length; i++)
+			{
+				dist[i] = Integer.MAX_VALUE;
+			}
+		
+			dist[startIndex] = 0;
+		
+			LinkedList<Integer> q = new LinkedList<Integer>();
+			q.add(startIndex);
+		
+			while(q.size()!=0)
+			{
+//				System.out.println("Entered while");
+			
+				int u = q.removeLast();
+			
+				//For all edges (u,v) in E
+				for(int v = 0; v < u; v++)
+				{
+//					System.out.println("Entered for");
+//					System.out.println("mst[u][v]: "+mst[u][v]);
+					if(mst[u][v] > 0)
+					{
+//						System.out.println("Entered first if");
+						if(dist[v] == Integer.MAX_VALUE)
+						{
+							q.addFirst(v);
+							dist[v] = dist[u] + 1;
+//							System.out.println(v+": "+dist[v]);
+						}
+					}
+				}
+			
+				for(int v = u+1; v < mst.length; v++)
+				{
+					if(mst[v][u] > 0)
+					{
+						if(dist[v] == Integer.MAX_VALUE)
+						{
+							q.addFirst(v);
+							dist[v] = dist[u] + 1;
+						}
+					}
+				}
+			}
+		}
+		return dist;
+	}
+	
+	public static double diameter(double[][] graph)
+	{
+		double diam = 0;
+		double radius = 0;
+		int vertex = 0;
+		
+		double[] firstBFS = bfs(graph, vertex);
+		
+		for(int i=0; i<firstBFS.length; i++)
+		{
+			if(firstBFS[i] > radius)
+			{
+				radius = firstBFS[i];
+				vertex = i;
+			}
+		}
+		
+		double[] secondBFS = bfs(graph, vertex);
+		
+		for(int i=0; i<secondBFS.length; i++)
+		{
+			if(secondBFS[i] > diam)
+			{
+				diam = secondBFS[i];
+			}
+		}
+		
+		return diam;
 	}
 	
 	public static class Vertex
@@ -336,6 +422,16 @@ public class Prim
 			}
 			System.out.println("");
 		}
+		double[] d = bfs(mstGraph, 0);
+		System.out.println("BFS: ");
+		for(int i=0; i<d.length; i++)
+		{
+			System.out.print(d[i] + " | ");
+		}
+		System.out.println("");
+		
+		double diam = diameter(mstGraph);
+		System.out.println("Diameter: "+diam);
 		
 		////////////////////////////////////////
 		System.out.println("\n\n");
