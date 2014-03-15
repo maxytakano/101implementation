@@ -46,31 +46,38 @@ public class Prim
 			
 			for(int j = 0; j < i; j++)
 			{
-				if(cost[j].getCost() > graph[i][j] && inPQ[j])
+				if(graph[i][j] >= 0)
 				{
-					Vertex vertexJ = cost[j];
-					pq.remove(vertexJ);
+					//System.out.println(graph[i][j]);
+					if(cost[j].getCost() > graph[i][j] && inPQ[j])
+					{
+						Vertex vertexJ = cost[j];
+						pq.remove(vertexJ);
 						
-					vertexJ.setCost(graph[i][j]);
-					pq.add(vertexJ);
+						vertexJ.setCost(graph[i][j]);
+						pq.add(vertexJ);
 						
-					cost[j] = vertexJ;
-					prev[j] = i;
+						cost[j] = vertexJ;
+						prev[j] = i;
+					}
 				}
 			}
 			
 			for(int j = i+1; j < length; j++)
 			{
-				if(cost[j].getCost() > graph[j][i] && inPQ[j])
+				if(graph[j][i] >= 0)
 				{
-					Vertex vertexJ = cost[j];
-					pq.remove(vertexJ);
+					if(cost[j].getCost() > graph[j][i] && inPQ[j])
+					{
+						Vertex vertexJ = cost[j];
+						pq.remove(vertexJ);
 						
-					vertexJ.setCost(graph[j][i]);
-					pq.add(vertexJ);
+						vertexJ.setCost(graph[j][i]);
+						pq.add(vertexJ);
 						
-					cost[j] = vertexJ;
-					prev[j] = i;
+						cost[j] = vertexJ;
+						prev[j] = i;
+					}
 				}
 			}
 		}
@@ -78,11 +85,34 @@ public class Prim
 		return prev;
 	}
 	
+	public static double[][] outputGraph(double[][] graph, int prev[])
+	{
+		double[][] newGraph = new double[prev.length][prev.length];
+		
+		int i=1;
+		
+		for(; i<prev.length; i++)
+		{
+			int j = prev[i];
+			System.out.println(j);
+			if(i>j)
+			{
+				newGraph[i][j] = graph[i][j];
+			}
+			else if(i<j)
+				newGraph[j][i] = graph[j][i];
+		}
+	
+		return newGraph;
+	}
+	
 	public static double calcMSTCost(double[][] graph, int[] prevs)
 	{
 		double totalCost = 0;
+		System.out.println("Prevs array: ");
 		for (int i = 0; i < prevs.length; i++)
 		{
+			System.out.print(prevs[i] + ", ");
 			int prev = prevs[i];
 			if (prev == -1)
 				continue;
@@ -92,7 +122,9 @@ public class Prim
 			else
 				totalCost += graph[i][prev];
 		}
+		System.out.println(" ");
 		return totalCost;
+		
 	}
 	
 	public static class Vertex
@@ -257,6 +289,44 @@ public class Prim
 		
 		System.out.println("Total Mst Cost Calculated:\n" + totalCost4);
 		System.out.println("Total Actual Mst Cost:\n" + 1.253);
+		
+		//Graph Neg Edges Test
+		double[][] graphNeg= {{0, 0, 0, 0}, {.809, 0, 0, 0},
+				{-1, .497, 0, 0}, {.75, .704, -1, 0}};
+		LinkedList<Integer[]> ccsNeg = CCFinder.findCCs(graphNeg);
+		System.out.println("graph for n = 4 and 1 CC");
+		for(int i = 0; i < graphNeg[0].length; i++) {
+			System.out.print("v" + i +": ");
+			for(int j = 0; j < graphNeg[0].length; j++) {
+				System.out.print(graphNeg[j][i] + " | ");
+			}
+			System.out.println("");
+		}
+		System.out.println("CCs for this graph:");
+		for (int i = 0; i < ccsNeg.size(); i++)
+		{
+			Integer[] ccNeg = ccsNeg.get(i);
+			System.out.print("CC " + i + " : ");
+			for (int j = 0; j < ccNeg.length; j++)
+			{
+				System.out.print(ccNeg[j] + ", ");
+			}
+			System.out.println();
+		}
+		
+		int[] mstEdgesNeg = primsMST(graphNeg);
+		double totalCostNeg = calcMSTCost(graphNeg, mstEdgesNeg);
+		
+		System.out.println("Total Mst Cost Calculated:\n" + totalCostNeg);
+		
+		double[][] mstGraph = outputGraph(graphNeg, primsMST(graphNeg));
+		for(int i = 0; i < mstGraph[0].length; i++) {
+			System.out.print("v" + i +": ");
+			for(int j = 0; j < mstGraph[0].length; j++) {
+				System.out.print(mstGraph[j][i] + " | ");
+			}
+			System.out.println("");
+		}
 	}
 }
 
