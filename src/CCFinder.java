@@ -1,4 +1,5 @@
 import java.util.LinkedList;
+import java.util.Iterator;
 import java.util.HashSet;
 
 
@@ -23,7 +24,7 @@ public class CCFinder {
 					continue;
 				
 				conComp = dfs(graph, i, new HashSet<Integer>());
-				conComps.add(conComp);
+				conComps.addLast(conComp);
 				for (int j = 0; j < conComp.length; j++)
 				{
 					vertices.remove(conComp[j]);
@@ -59,19 +60,68 @@ public class CCFinder {
 		return set.toArray(new Integer[0]);
 	}
 	
+	public static LinkedList<double[][]> graphCCs(LinkedList<Integer[]> ccList,
+			double[][] graph)
+	{
+		if (ccList == null || graph == null)
+			return null;
+		LinkedList<double[][]> graphCCs = new LinkedList<double[][]>();
+		
+//		for (Integer[] ary : ccList)
+//		{
+//			double[][] currGraph = new double[ary.length][ary.length];
+//			for (int i = 0; i < ary.length; i++)
+//			{
+//				for (int j = i+1; j< ary.length; j++)
+//				{
+//					currGraph[j][i] = graph[ary[j]][ary[i]];
+//				}
+//			}
+//			graphCCs.addFirst(currGraph);
+//		}
+		Iterator<Integer[]> it = ccList.iterator();
+		for (int m = 0; m < ccList.size(); m++)
+		{
+			Integer[] ary = it.next();
+			double[][] currGraph = new double[ary.length][ary.length];
+			for (int i = 0; i < ary.length; i++)
+			{
+				for (int j = i+1; j< ary.length; j++)
+				{
+					currGraph[j][i] = graph[ary[j]][ary[i]];
+				}
+			}
+			graphCCs.addLast(currGraph);
+		}
+
+		return graphCCs;
+	}
+	
+	public static void printGraph(double[][] graph)
+	{
+		for(int i = 0; i < graph[0].length; i++) {
+			System.out.print("v" + i +": ");
+			for(int j = 0; j < graph[0].length; j++) {
+				System.out.print(graph[j][i] + " | ");
+			}
+			System.out.println("");
+		}
+	}
+	
 	// tests
 	public static void main(String[] args)
 	{
 		Graph graph = new Graph(4, 1);
 		LinkedList<Integer[]> ccs = findCCs(graph.getAdjacency());
 		System.out.println("graph for n = 4 and p = 1:");
-		for(int i = 0; i < graph.n; i++) {
-			System.out.print("v" + i +": ");
-			for(int j = 0; j < graph.n; j++) {
-				System.out.print(graph.getAdjacency()[j][i] + " | ");
-			}
-			System.out.println("");
-		}
+		printGraph(graph.getAdjacency());
+//		for(int i = 0; i < graph.n; i++) {
+//			System.out.print("v" + i +": ");
+//			for(int j = 0; j < graph.n; j++) {
+//				System.out.print(graph.getAdjacency()[j][i] + " | ");
+//			}
+//			System.out.println("");
+//		}
 		System.out.println("CCs for this graph:");
 		for (int i = 0; i < ccs.size(); i++)
 		{
@@ -89,13 +139,14 @@ public class CCFinder {
 		Graph graph2 = new Graph(6, .1);
 		LinkedList<Integer[]> ccs2 = findCCs(graph2.getAdjacency());
 		System.out.println("graph for n = 6 and p = .1:");
-		for(int i = 0; i < graph2.n; i++) {
-			System.out.print("v" + i +": ");
-			for(int j = 0; j < graph2.n; j++) {
-				System.out.print(graph2.getAdjacency()[j][i] + " | ");
-			}
-			System.out.println("");
-		}
+		printGraph(graph2.getAdjacency());
+//		for(int i = 0; i < graph2.n; i++) {
+//			System.out.print("v" + i +": ");
+//			for(int j = 0; j < graph2.n; j++) {
+//				System.out.print(graph2.getAdjacency()[j][i] + " | ");
+//			}
+//			System.out.println("");
+//		}
 		System.out.println("CCs for this graph:");
 		for (int i = 0; i < ccs2.size(); i++)
 		{
@@ -112,17 +163,18 @@ public class CCFinder {
 		
 //		Graph graph3 = new Graph(6, .1);
 		double[][] graph3= {{0, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0},
-				{-1, -1, 0, 0, 0, 0}, {0.57, -1, -1, 0, 0, 0},
+				{0.3, -1, 0, 0, 0, 0}, {0.57, -1, -1, 0, 0, 0},
 				{-1, 0.09, -1, -1, 0, 0}, {-1, -1, -1, -1, -1, 0}};
 		LinkedList<Integer[]> ccs3 = findCCs(graph3);
 		System.out.println("graph for n = 6 and 4 CCs");
-		for(int i = 0; i < graph3[0].length; i++) {
-			System.out.print("v" + i +": ");
-			for(int j = 0; j < graph3[0].length; j++) {
-				System.out.print(graph3[j][i] + " | ");
-			}
-			System.out.println("");
-		}
+		printGraph(graph3);
+//		for(int i = 0; i < graph3[0].length; i++) {
+//			System.out.print("v" + i +": ");
+//			for(int j = 0; j < graph3[0].length; j++) {
+//				System.out.print(graph3[j][i] + " | ");
+//			}
+//			System.out.println("");
+//		}
 		System.out.println("CCs for this graph:");
 		for (int i = 0; i < ccs3.size(); i++)
 		{
@@ -133,6 +185,13 @@ public class CCFinder {
 				System.out.print(cc3[j] + ", ");
 			}
 			System.out.println();
+		}
+		System.out.println("Individual CC graphs:");
+		LinkedList<double[][]> cc3Graphs = graphCCs(ccs3, graph3);
+		for (int i = 0; i < cc3Graphs.size(); i++)
+		{
+			System.out.println("Graph for CC" + i + ":");
+			printGraph(cc3Graphs.get(i));
 		}
 	}
 	
