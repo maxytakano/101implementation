@@ -108,8 +108,19 @@ public class GrahamScan {
 
         List<Point2D.Double> sorted = new ArrayList<Point2D.Double>(getSortedPointSet(points));
 
-        if(sorted.size() < 3) {
-            throw new IllegalArgumentException("can only create a convex hull of 3 or more unique points");
+        /*if(sorted.size() < 3) {
+        	
+            //throw new IllegalArgumentException("can only create a convex hull of 3 or more unique points");
+        }*/
+        
+        // Two points: just add them to convex hull
+        if(sorted.size() == 2) {
+        	return points;
+        }
+
+        // One point: just add to convex hull
+        if(sorted.size() == 1) {
+        	return points;
         }
 
         if(areAllCollinear(sorted)) {
